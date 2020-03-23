@@ -4,10 +4,11 @@ spring:
   application:
     name: MultiTenant
   datasource:
-    url: 'jdbc:mysql://localhost:3309/public?ApplicationName=MultiTenant'
+    url: 'jdbc:mysql://localhost:3309'
     username: 'root'
     password: 'rootpassword'
     driver-class-name: com.mysql.cj.jdbc.Driver
+    initialization-mode: always
   jpa:
     properties:
       hibernate:

@@ -38,7 +38,8 @@ public class HibernateConfig {
         jpaPropertiesMap.put(Environment.MULTI_TENANT, MultiTenancyStrategy.SCHEMA);
         jpaPropertiesMap.put(Environment.MULTI_TENANT_CONNECTION_PROVIDER, multiTenantConnectionProviderImpl);
         jpaPropertiesMap.put(Environment.MULTI_TENANT_IDENTIFIER_RESOLVER, currentTenantIdentifierResolverImpl);
-        jpaPropertiesMap.put(Environment.HBM2DDL_AUTO, "update");
+        jpaPropertiesMap.put(Environment.FORMAT_SQL, true);
+        jpaPropertiesMap.put(Environment.SHOW_SQL, true);
 
         LocalContainerEntityManagerFactoryBean em = new LocalContainerEntityManagerFactoryBean();
         em.setDataSource(dataSource);

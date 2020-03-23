@@ -1,7 +1,7 @@
 # Multitenancy
 Follow are 2 different approaches of Multitenancy.
 - Schema per tenant
-- Database per tenant [check it out](https://github.com/carloselpapa10/multitenancy/tree/feature/database-per-tenant/src/main/resources)
+- Database per tenant [check it out](https://github.com/carloselpapa10/multitenancy/tree/feature/database-per-tenant)
 > Note: Master and develop branchs contain Schema per tenant approach.
 
 ## Prerequisites

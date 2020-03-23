@@ -26,7 +26,7 @@ $ mvn spring-boot:run
 ```
 
 ### Database per tenant approach
-Checkout out the database per tenant branch
+Check out the database per tenant branch
 ```sh
 $  git checkout feature/database-per-tenant
 ```

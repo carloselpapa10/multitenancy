@@ -1,12 +1,14 @@
 package com.example.multitenancy.interceptor;
 
 import com.example.multitenancy.context.TenantContext;
+import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+@Component
 public class RequestInterceptor extends HandlerInterceptorAdapter {
 
     private final String X_TENANT_ID = "X-TenantID";

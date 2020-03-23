@@ -1,9 +1,10 @@
 package com.example.multitenancy.schemapertenant;
 
 import com.example.multitenancy.constant.MultiTenantConstants;
-import com.sun.org.slf4j.internal.Logger;
-import com.sun.org.slf4j.internal.LoggerFactory;
+import org.hibernate.HibernateException;
 import org.hibernate.engine.jdbc.connections.spi.MultiTenantConnectionProvider;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
 import javax.sql.DataSource;
@@ -33,8 +34,22 @@ public class TenantConnectionProvider implements MultiTenantConnectionProvider {
     @Override
     public Connection getConnection(String tenantIdentifier) throws SQLException {
         logger.debug("Get connection for tenant {}", tenantIdentifier);
+//        final Connection connection = getAnyConnection();
+//        connection.setSchema(tenantIdentifier);
+//        return connection;
+
         final Connection connection = getAnyConnection();
-        connection.setSchema(tenantIdentifier);
+        try {
+            if (tenantIdentifier != null) {
+                connection.createStatement().execute("USE " + tenantIdentifier);
+            } else {
+                connection.createStatement().execute("USE " + MultiTenantConstants.DEFAULT_TENANT_ID);
+            }
+        } catch (SQLException e) {
+            throw new HibernateException(
+                    "Could not alter JDBC connection to specified schema [" + tenantIdentifier + "]", e
+            );
+        }
         return connection;
     }
 

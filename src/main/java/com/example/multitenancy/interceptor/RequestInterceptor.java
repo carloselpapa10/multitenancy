@@ -1,5 +1,6 @@
 package com.example.multitenancy.interceptor;
 
+import com.example.multitenancy.constant.MultiTenantConstants;
 import com.example.multitenancy.context.TenantContext;
 import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.ModelAndView;
@@ -11,7 +12,6 @@ import javax.servlet.http.HttpServletResponse;
 @Component
 public class RequestInterceptor extends HandlerInterceptorAdapter {
 
-    private final String X_TENANT_ID = "X-TenantID";
     private final String TENANT_NOT_FOUND_ERROR = "X-TenantID not present in the Request Header";
     private final int BAD_REQUEST_HTTP_CODE_ERROR = 400;
 
@@ -19,7 +19,7 @@ public class RequestInterceptor extends HandlerInterceptorAdapter {
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
 
         String requestURI = request.getRequestURI();
-        String tenantId = request.getHeader(X_TENANT_ID);
+        String tenantId = request.getHeader(MultiTenantConstants.X_TENANT_ID);
 
         System.out.println("RequestURI::" + requestURI + " || Search for X-TenantID  :: " + tenantId);
 

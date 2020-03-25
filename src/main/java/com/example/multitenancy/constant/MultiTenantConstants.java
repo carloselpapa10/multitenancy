@@ -2,6 +2,5 @@ package com.example.multitenancy.constant;
 
 public interface MultiTenantConstants {
     String DEFAULT_TENANT_ID = "public";
-    String CURRENT_TENANT_IDENTIFIER = "CURRENT_TENANT_IDENTIFIER";
-    String TENANT_KEY = "tenant";
+    String X_TENANT_ID = "X-TenantID";
 }

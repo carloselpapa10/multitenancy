@@ -9,6 +9,18 @@ spring:
     password: 'rootpassword'
     driver-class-name: com.mysql.cj.jdbc.Driver
     initialization-mode: always
+  cloud:
+    stream:
+      kafka:
+        binder:
+          brokers: localhost:9092
+      bindings:
+        greetings-in:
+          destination: city
+          contentType: application/json
+        greetings-out:
+          destination: city
+          contentType: application/json
   jpa:
     properties:
       hibernate:

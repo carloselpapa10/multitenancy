@@ -9,20 +9,47 @@ spring:
     password: 'rootpassword'
     driver-class-name: com.mysql.cj.jdbc.Driver
     initialization-mode: always
-  cloud:
-    stream:
-      kafka:
-        binder:
-          brokers: localhost:9092
-      bindings:
-        greetings-in:
-          destination: city
-          contentType: application/json
-        greetings-out:
-          destination: city
-          contentType: application/json
   jpa:
     properties:
       hibernate:
         hbm2ddl:
           auto: none
+  cloud:
+    stream:
+      default:
+        producer:
+          useNativeEncoding: true
+        consumer:
+          useNativeDecoding: true
+      bindings:
+        input:
+          destination: order-details
+          content-type: application/*+avro
+          group: group-1
+          concurrency: 3
+        output:
+          destination: order-details
+          content-type: application/*+avro
+        greetings-in:
+          destination: city
+          contentType: application/json
+          group: group-city-1
+        greetings-out:
+          destination: city
+          contentType: application/json
+      kafka:
+        binder:
+          brokers: localhost:9092
+          consumer-properties:
+            key.deserializer: io.confluent.kafka.serializers.KafkaAvroDeserializer
+            value.deserializer: io.confluent.kafka.serializers.KafkaAvroDeserializer
+            schema.registry.url: http://localhost:8081
+            specific.avro.reader: true
+            auto-offset-reset: earliest
+          producer-properties:
+            key.serializer: io.confluent.kafka.serializers.KafkaAvroSerializer
+            value.serializer: io.confluent.kafka.serializers.KafkaAvroSerializer
+            schema.registry.url: http://localhost:8081
+            value.subject.name.strategy: io.confluent.kafka.serializers.subject.TopicRecordNameStrategy
+
+

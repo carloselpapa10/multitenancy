@@ -1,0 +1,61 @@
+server:
+  port: 8090
+
+gateway:
+  apps:
+    multitenancy:
+      uri: http://localhost:8080
+
+spring:
+  cloud:
+    gateway:
+      routes:
+        - id: GetMultitenancyOrder
+          uri: ${gateway.apps.multitenancy.uri}
+          predicates:
+          - Path=/multitenancy/order
+          - Method=GET,POST
+          filters:
+          - name: CircuitBreaker
+            args:
+              name: defaultCustomizer
+          - RewritePath=/multitenancy/order, /order
+        - id: GetMultitenancyOrderById
+          uri: ${gateway.apps.multitenancy.uri}
+          predicates:
+          - Path=/multitenancy/order/**
+          - Method=GET
+          filters:
+          - name: CircuitBreaker
+            args:
+              name: defaultCustomizer
+          - RewritePath=/multitenancy/order/(?<id>.*), /order/('${id}')
+        - id: PostMultitenancyOrderSleeping
+          uri: ${gateway.apps.multitenancy.uri}
+          predicates:
+            - Path=/multitenancy/order/sleeping
+            - Method=POST
+          filters:
+            - name: CircuitBreaker
+              args:
+                name: defaultCustomizer
+            - RewritePath=/multitenancy/order/sleeping, /order/sleeping
+        - id: PostMultitenancyOrderError
+          uri: ${gateway.apps.multitenancy.uri}
+          predicates:
+            - Path=/multitenancy/order/error
+            - Method=POST
+          filters:
+            - name: Retry
+              args:
+                retries: 3
+                statuses: OK
+                methods: POST
+                exceptions:
+                - java.io.IOException
+                backoff:
+                  firstBackoff: 10ms
+                  maxBackoff: 50ms
+                  factor: 2
+                  basedOnPreviousValue: false
+            - RewritePath=/multitenancy/order/error, /order/error

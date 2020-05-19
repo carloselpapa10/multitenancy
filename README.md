@@ -2,7 +2,16 @@
 This repo implements 2 different approaches of Multitenancy.
 - Schema per tenant
 - Database per tenant [check it out](https://github.com/carloselpapa10/multitenancy/tree/feature/database-per-tenant)
+- Schema per tenant using mqtt requests (kafka broker) [check it out](https://github.com/carloselpapa10/multitenancy/tree/feature/schema-per-tenant-with-kafka)
 > Note: Master and develop branchs contain Schema per tenant approach.
+
+## Understanding the Request Flow
+The process to establish a multi-tenant communication usually consists of the following three steps:
+1. Accept the incoming connection, and authenticate the user if necessary.
+2. Intercept the request and identify the tenant for which the user is issuing the request.
+3. Establish a connection with the database or schema of the tenant.
+
+Tenant identification is performed against a default schema, which contains the user's information. A user can authenticate himself on an external service and then pass the tenant information using an HTTP header or a Mqtt header.
 
 ## Prerequisites
 - Java 8 or greater
@@ -45,6 +54,38 @@ INSERT INTO public.DataSourceConfig VALUES (2, 'com.mysql.cj.jdbc.Driver', 'jdbc
 ```
 Stop the application (Ctrl + C) and start it again to apply the changes.
 
+### Schema per tenant using mqtt requests (kafka broker) approach
+Run these docker commands
+```sh
+$ docker run -d \
+	--name zookeeper \
+	--network=demo_default \
+	-p 2181:2181 \
+	-e ZOOKEEPER_CLIENT_PORT=2181 \
+	confluentinc/cp-zookeeper
+
+$ docker run -d \
+	--name kafka \
+	--network=demo_default \
+	-p 9092:9092 \
+	-e KAFKA_ZOOKEEPER_CONNECT=zookeeper:2181 \
+	-e KAFKA_ADVERTISED_HOST_NAME=${DOCKER_HOST_IP} \
+	-e KAFKA_PORT=9092 \
+	-e KAFKA_ADVERTISED_PORT=9092 \
+	wurstmeister/kafka:0.11.0.1
+```
+Check out the schema per tenant with kafka branch
+```sh
+$  git checkout feature/schema-per-tenant-with-kafka
+```
+Install the maven application
+```sh
+$ mvn clean install -DskipTests
+```
+Run the application
+```sh
+$ mvn spring-boot:run
+```
 ### How to use it?
 POST request to add a new city (Bogota) into tenant named test1
 ```sh
@@ -71,6 +112,11 @@ $ curl -X GET http://localhost:8080/ -H 'Content-Type: application/json' -H 'X-T
 3. [MultiTenancy implementation using spring boot](https://medium.com/swlh/multi-tenancy-implementation-using-spring-boot-hibernate-6a8e3ecb251a)
 4. [Spring boot multitenancy](https://bytefish.de/blog/spring_boot_multitenancy/)
 5. [SaaS Tenancy app design patterns](https://docs.microsoft.com/es-mx/azure/sql-database/saas-tenancy-app-design-patterns)
+6. [Multi-Tenancy Data Models in Kafka](https://www.digitalernachschub.de/blog/multi-tenancy-data-models-in-kafka/)
+7. [Introduction to the Spring Cloud Stream](https://www.alibabacloud.com/blog/introduction-to-the-spring-cloud-stream-system_594822)
+8. [Spring Cloud Stream With Kafka](https://dzone.com/articles/spring-cloud-stream-with-kafka)
+9. [Kafka With Spring Cloud Stream](https://dzone.com/articles/kafka-with-spring-cloud-stream)
+10. [Spring Cloud Stream - Pivotal](https://spring.io/projects/spring-cloud-stream)
 
 ### MSc Carlos Avendaño
 [Linkedin](https://www.linkedin.com/in/carlos-alberto-avenda%C3%B1o-arango-534b0a137/)

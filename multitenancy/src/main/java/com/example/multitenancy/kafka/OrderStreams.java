@@ -3,16 +3,21 @@ package com.example.multitenancy.kafka;
 import org.springframework.cloud.stream.annotation.Input;
 import org.springframework.cloud.stream.annotation.Output;
 import org.springframework.messaging.MessageChannel;
+import org.springframework.messaging.PollableChannel;
 import org.springframework.messaging.SubscribableChannel;
 
 public interface OrderStreams {
 
-  @Input("order-details")
+  String INPUT = "order-in";
+  String OUTPUT_CREATED = "order-creates-out";
+  String OUTPUT_COMPLETED = "order-completed-out";
+
+  @Input(INPUT)
   SubscribableChannel orders();
 
-  @Output
+  @Output(OUTPUT_CREATED)
   MessageChannel orderCreatedEvents();
 
-  @Output
+  @Output(OUTPUT_COMPLETED)
   MessageChannel orderCompletedEvents();
 }

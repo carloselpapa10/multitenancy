@@ -2,6 +2,7 @@ package com.example.multitenancy.controller;
 
 import com.example.multitenancy.constant.MultiTenantConstants;
 import com.example.multitenancy.context.TenantContext;
+import com.example.multitenancy.kafka.OrderStreams;
 import com.example.multitenancy.project.Order;
 import io.example.ordersample.avro.schemas.OrderCompletedEvent;
 import io.example.ordersample.avro.schemas.OrderCreatedEvent;
@@ -27,7 +28,7 @@ import java.util.UUID;
 public class OrderController {
 
   @Autowired
-  private Processor processor;
+  private OrderStreams orderStreams;
 
   @GetMapping
   public ResponseEntity<List<Order>> getOrders() {
@@ -51,7 +52,8 @@ public class OrderController {
         .setHeader("type", "OrderCreatedEvent")
         .setHeader(MultiTenantConstants.X_TENANT_ID, TenantContext.getCurrentTenant())
         .build();
-    processor.output().send(message);
+    //processor.output().send(message);
+    orderStreams.orderCreatedEvents().send(message);
     return orderId;
   }
 
@@ -83,7 +85,8 @@ public class OrderController {
         .setHeader("type", "OrderCompletedEvent")
         .setHeader(MultiTenantConstants.X_TENANT_ID, TenantContext.getCurrentTenant())
         .build();
-    processor.output().send(message);
+    //processor.output().send(message);
+    orderStreams.orderCompletedEvents().send(message);
   }
 
 }

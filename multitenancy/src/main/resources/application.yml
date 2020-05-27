@@ -4,9 +4,9 @@ spring:
   application:
     name: MultiTenant
   datasource:
-    url: 'jdbc:mysql://localhost:3309'
+    url: 'jdbc:mysql://localhost:3307'
     username: 'root'
-    password: 'rootpassword'
+    password: 'password'
     driver-class-name: com.mysql.cj.jdbc.Driver
     initialization-mode: always
   jpa:
@@ -22,12 +22,15 @@ spring:
         consumer:
           useNativeDecoding: true
       bindings:
-        input:
+        order-in:
           destination: order-details
           content-type: application/*+avro
           group: group-1
           concurrency: 3
-        output:
+        order-creates-out:
+          destination: order-details
+          content-type: application/*+avro
+        order-completed-out:
           destination: order-details
           content-type: application/*+avro
         greetings-in:

@@ -15,46 +15,31 @@ import org.springframework.stereotype.Component;
 @GlobalChannelInterceptor
 public class MessageInterceptor implements ChannelInterceptor {
 
-    private final Logger log = LoggerFactory.getLogger(MessageInterceptor.class);
+  private final Logger log = LoggerFactory.getLogger(MessageInterceptor.class);
 
-    @Override
-    public Message<?> preSend(Message<?> msg, MessageChannel mc) {
-        String tenantId = (String) msg.getHeaders().get(MultiTenantConstants.X_TENANT_ID);
-        System.out.println("Channel topic::" + ((DirectWithAttributesChannel) mc).getBeanName() + " || Search for X-TenantID  :: " + tenantId);
+  @Override
+  public Message<?> preSend(Message<?> msg, MessageChannel mc) {
+    String tenantId = (String) msg.getHeaders().get(MultiTenantConstants.X_TENANT_ID);
+    System.out.println(
+        "Channel topic::" + ((DirectWithAttributesChannel) mc).getBeanName() + " || Search for X-TenantID  :: " +
+            tenantId);
 
-        if (tenantId == null) {
-            log.error("Entry message does not contain a corresponding tenant in the header");
-            return null;
-        }
-
-        TenantContext.setCurrentTenant(tenantId);
-        return msg;
+    if (tenantId == null) {
+      log.error("Entry message does not contain a corresponding tenant in the header");
+      return null;
     }
 
-    @Override
-    public void postSend(Message<?> msg, MessageChannel mc, boolean bln) {
-        TenantContext.clear();
-    }
+    TenantContext.setCurrentTenant(tenantId);
+    return msg;
+  }
 
-    @Override
-    public void afterSendCompletion(Message<?> msg, MessageChannel mc, boolean bln, Exception excptn) {
-        log.info("Message in afterSendCompletion");
-    }
+  @Override
+  public void postSend(Message<?> msg, MessageChannel mc, boolean bln) {
+    TenantContext.clear();
+  }
 
-    @Override
-    public boolean preReceive(MessageChannel mc) {
-        log.info("Message in preReceive");
-        return true;
-    }
-
-    @Override
-    public Message<?> postReceive(Message<?> msg, MessageChannel mc) {
-        log.info("Message in postReceive");
-        return msg;
-    }
-
-    @Override
-    public void afterReceiveCompletion(Message<?> msg, MessageChannel mc, Exception excptn) {
-        log.info("Message in afterReceiveCompletion");
-    }
+  @Override
+  public void afterSendCompletion(Message<?> msg, MessageChannel mc, boolean bln, Exception excptn) {
+    log.info("Message in afterSendCompletion");
+  }
 }
